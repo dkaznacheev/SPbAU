@@ -38,31 +38,25 @@ def read_words(filename):
             words.extend(line.split())
     return words
 
-def count_words(filename, top):
+def count_words(filename):
     words = read_words(filename)
     wordcounter = {}
     for word in words:
         lword = word.lower()
-        if lword in wordcounter:
-            wordcounter[lword] += 1
-        else:
-            wordcounter[lword] = 1
-    sortedcounter = sorted(wordcounter, key = wordcounter.get, reverse = True)
-    if top:
-        return sortedcounter[:20]
-    
-    return sortedcounter
-
-def print_list(l):
-    for s in l:
-	    print(s) 
-
+        wordcounter[lword] = wordcounter.get(lword, 0) + 1    
+    return wordcounter
+                 
 def print_words(filename):           
-    print_list(count_words(filename, False))
+    counter = count_words(filename)
+    for w in sorted(counter):
+        print("%s %s", w, counter[w])
     return
 
 def print_top(filename):           
-    print_list(count_words(filename, True))
+    counter = count_words(filename)
+    counter = sorted(counter, key = counter.get, reverse = True)[:20]
+    for w in counter:
+        print(w) 
     return
 
 # Define print_words(filename) and print_top(filename) functions.

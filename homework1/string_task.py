@@ -12,10 +12,8 @@ def verbing(s):
     if len(s) >= 3:
         if s[-3:] == 'ing':
             return s + 'ly'
-        else:
-            return s + 'ing'
-    else:
-        return s
+        return s + 'ing'
+    return s
  
  
 # Given a string, find the first appearance of the
@@ -29,10 +27,9 @@ def verbing(s):
 def not_bad(s):
     notpos = s.find('not')
     badpos = s.find('bad')
-    if notpos < badpos:
+    if badpos > -1 and notpos < badpos:
         return s[:notpos]+'good'+s[badpos + 3:]
-    else:
-        return s
+    return s
  
  
 # Consider dividing a string into two halves.
