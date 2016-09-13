@@ -27,7 +27,7 @@ def verbing(s):
 def not_bad(s):
     notpos = s.find('not')
     badpos = s.find('bad')
-    if badpos > -1 and notpos < badpos:
+    if notpos > -1 and badpos > notpos:
         return s[:notpos]+'good'+s[badpos + 3:]
     return s
  
@@ -43,6 +43,7 @@ def not_bad(s):
 # Example input: 'abcd', 'xy'
 # Example output: 'abxcdy'
 def front_back(a, b):
-    am = (len(a) + 1)//2
-    bm = (len(b) + 1)//2
+    am = (len(a) + 1) // 2
+    bm = (len(b) + 1) // 2
     return a[:am] + b[:bm] + a[am:] + b[bm]
+                            

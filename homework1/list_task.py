@@ -4,10 +4,10 @@
 # Example output: [1, 2, 3]
 def remove_adjacent(lst):
     lst1 = []
-    if len(lst) == 0:
+    if not lst:
         return lst
     lst1.append(lst[0])
-    for c in lst[1:]: 
+    for c in lst: 
         if c != lst1[-1]:
             lst1.append(c)
     return lst1
@@ -30,3 +30,4 @@ def linear_merge(lst1, lst2):
             lst3.append(lst2[j])
             j += 1                      
     return lst3 + lst1[i:] + lst2[j:]                             
+                            

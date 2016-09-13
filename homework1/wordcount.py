@@ -39,9 +39,8 @@ def read_words(filename):
     return words
 
 def count_words(filename):
-    words = read_words(filename)
     wordcounter = {}
-    for word in words:
+    for word in read_words(filename):
         lword = word.lower()
         wordcounter[lword] = wordcounter.get(lword, 0) + 1    
     return wordcounter
@@ -49,12 +48,12 @@ def count_words(filename):
 def print_words(filename):           
     counter = count_words(filename)
     for w in sorted(counter):
-        print("%s %s", w, counter[w])
+        print(w, ' ', counter[w])
     return
 
 def print_top(filename):           
     counter = count_words(filename)
-    counter = sorted(counter, key = counter.get, reverse = True)[:20]
+    counter = sorted(counter, key = counter.get)[:20:-1]
     for w in counter:
         print(w) 
     return
