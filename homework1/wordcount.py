@@ -49,14 +49,12 @@ def print_words(filename):
     counter = count_words(filename)
     for w, num in sorted(counter.items()):
         print(w, ' ', num)
-    return
 
 def print_top(filename):           
     counter = count_words(filename)
     counter = sorted(counter, key = counter.get)[:-21:-1]
     for w in counter:
-        print(w) 
-    return
+        print(w)                             
 
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
