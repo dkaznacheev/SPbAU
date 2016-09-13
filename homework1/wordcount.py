@@ -47,13 +47,13 @@ def count_words(filename):
                  
 def print_words(filename):           
     counter = count_words(filename)
-    for w in sorted(counter):
-        print(w, ' ', counter[w])
+    for w, num in sorted(counter.items()):
+        print(w, ' ', num)
     return
 
 def print_top(filename):           
     counter = count_words(filename)
-    counter = sorted(counter, key = counter.get)[:20:-1]
+    counter = sorted(counter, key = counter.get)[:-21:-1]
     for w in counter:
         print(w) 
     return

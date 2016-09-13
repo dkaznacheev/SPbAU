@@ -45,5 +45,5 @@ def not_bad(s):
 def front_back(a, b):
     am = (len(a) + 1) // 2
     bm = (len(b) + 1) // 2
-    return a[:am] + b[:bm] + a[am:] + b[bm]
+    return a[:am] + b[:bm] + a[am:] + b[bm:]
                             
