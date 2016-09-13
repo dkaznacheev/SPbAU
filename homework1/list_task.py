@@ -5,7 +5,7 @@
 def remove_adjacent(lst):
     lst1 = []
     if not lst:
-        return lst
+        return []
     lst1.append(lst[0])
     for c in lst: 
         if c != lst1[-1]:
