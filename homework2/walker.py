@@ -1,26 +1,31 @@
 import sys, os, hashlib
 
+def get_hexdigest(filepath):
+	digest = hashlib.md5()
+	with open(filepath, 'rb') as fb:
+		buf = fb.read()
+		digest.update(buf)
+	return digest.hexdigest()
+				
+
+def print_dupes(dct):
+	for key, files in dct.items():
+		if len(files) > 1:
+			print (":".join(files))
+
 def find_dupes(dirname):
-	hashdict = {}
-	cwd = os.path.join(os.getcwd(),dirname) 
-	for root, dirs, files in os.walk(cwd):
+	hashdict = {}                               
+	for root, dirs, files in os.walk(dirname):
 		for f in files:
-			if f.startswith('.') or f.startswith('~'):
+			cur_path = os.path.join(root, f)
+			if f.startswith('.') or f.startswith('~') or os.path.islink(cur_path):
 				continue
-			digest = hashlib.md5()
-			with open(os.path.join(root, f), 'rb') as fb:
-				buf = fb.read()
-				digest.update(buf)
-			hd = digest.hexdigest()
+			hd = get_hexdigest(cur_path)
 			if hd not in hashdict:
 				hashdict[hd] = []
-			hashdict[hd].append(os.path.join(os.path.relpath(root, cwd), f))
-	for key, files in hashdict.items():
-		if len(files) > 1:
-			for f in files[:-1]:
-				print(f + ':', end = "")
-			print (files[-1])
-
+			hashdict[hd].append(os.path.relpath(cur_path, dirname))
+	print_dupes(hashdict)
+	
 def main():             	
 	if len(sys.argv) < 2:
 		print('No directory given')
