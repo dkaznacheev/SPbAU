@@ -1,10 +1,19 @@
 import sys, os, hashlib
 
+CHUNK_SIZE = 1024
+
+def read_chunk(f):
+	while True:
+		data = f.read(CHUNK_SIZE)
+		if not data:
+			break
+		yield data
+
 def get_hexdigest(filepath):
 	digest = hashlib.md5()
 	with open(filepath, 'rb') as fb:
-		buf = fb.read()
-		digest.update(buf)
+		for chunk in read_chunk(fb):
+			digest.update(chunk)
 	return digest.hexdigest()
 				
 
