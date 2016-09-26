@@ -22,36 +22,37 @@ def multiply(a, b):
 	p5 = multiply(a11 + a12, b22)
 	p6 = multiply(a21 - a11, b11 + b12)
 	p7 = multiply(a12 - a22, b21 + b22)
-
-	c11 = p1 + p4 - p5 + p7
-	c12 = p3 + p5
-	c21 = p2 + p4
-	c22 = p1 - p2 + p3 + p6                                          
-	c = np.empty(num * num).astype(int).reshape(num, num)
+     	                                                                           
+	c = np.empty(num * num).astype(a.dtype).reshape(num, num)
 	for i in range(half):
 		for j in range(half):
-			c[i][j] = c11[i][j]
-			c[i][j + half] = c12[i][j]
-			c[i + half][j] = c21[i][j]
-			c[i + half][j + half] = c22[i][j]
+			c[i][j] = p1[i][j] + p4[i][j] - p5[i][j] + p7[i][j]
+			c[i][j + half] = p3[i][j] + p5[i][j]
+			c[i + half][j] = p2[i][j] + p4[i][j]
+			c[i + half][j + half] = p1[i][j] - p2[i][j] + p3[i][j] + p6[i][j]
 	return c
 
 def read_array(n):
-	cn = 2 ** ((n - 1).bit_length())
 	a = np.empty(n * n).astype(int).reshape(n, n)	
 	for i in range(n):
 		s = input()                            
 		a[i] = [int(x) for x in s.split(' ')]
-	if n != cn:
-		a = np.hstack((a, np.zeros(n * (cn - n)).astype(int).reshape(n, cn - n)))
-		a = np.vstack((a, np.zeros((cn - n) * cn).astype(int).reshape(cn - n, cn)))
 	return a
-                    
+
+def resize_array(a, n):
+	cn = 2 ** ((n - 1).bit_length())
+	if n != cn:
+		a = np.hstack((a, np.zeros(n * (cn - n)).astype(a.dtype).reshape(n, cn - n)))
+		a = np.vstack((a, np.zeros((cn - n) * cn).astype(a.dtype).reshape(cn - n, cn)))
+	return a
+	
+            
 n = int(input())                          
 
 a = read_array(n)
 b = read_array(n)                                            
-
+a = resize_array(a, n)                                       
+b = resize_array(b, n)
 c = multiply(a, b)[:n, :n]
 for line in c:
 	print(' '.join(str(x) for x in line))
