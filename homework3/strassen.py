@@ -27,11 +27,18 @@ def multiply(a, b):
 	c12 = p3 + p5
 	c21 = p2 + p4
 	c22 = p1 - p2 + p3 + p6                                          
-	return np.vstack(( np.hstack((c11, c12)) , np.hstack((c21, c22)) ))
+	c = np.empty(num * num).astype(int).reshape(num, num)
+	for i in range(half):
+		for j in range(half):
+			c[i][j] = c11[i][j]
+			c[i][j + half] = c12[i][j]
+			c[i + half][j] = c21[i][j]
+			c[i + half][j + half] = c22[i][j]
+	return c
 
 def read_array(n):
 	cn = 2 ** ((n - 1).bit_length())
-	a = np.zeros(n * n).astype(int).reshape(n, n)	
+	a = np.empty(n * n).astype(int).reshape(n, n)	
 	for i in range(n):
 		s = input()                            
 		a[i] = [int(x) for x in s.split(' ')]
