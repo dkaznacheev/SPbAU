@@ -26,32 +26,25 @@ def multiply(a, b):
 	c11 = p1 + p4 - p5 + p7
 	c12 = p3 + p5
 	c21 = p2 + p4
-	c22 = p1 - p2 + p3 + p6
-	c1 = np.hstack((c11, c12))
-	c2 = np.hstack((c21, c22))
-	return np.vstack((c1, c2))
+	c22 = p1 - p2 + p3 + p6                                          
+	return np.vstack(( np.hstack((c11, c12)) , np.hstack((c21, c22)) ))
 
 def read_array(n):
-	arr = []
+	cn = 2 ** ((n - 1).bit_length())
+	a = np.zeros(n * n).astype(int).reshape(n, n)	
 	for i in range(n):
 		s = input()                            
-		arr.append([int(x) for x in s.split(' ')])
-	arr = np.array(arr)
-	return arr            
-
-def add_zeros(a, n):
-	cn = 2 ** ((n - 1).bit_length())
+		a[i] = [int(x) for x in s.split(' ')]
 	if n != cn:
-		a = np.hstack((a, np.zeros(n * (cn - n)).reshape(n, cn - n)))
-		a = np.vstack((a, np.zeros((cn - n) * cn).reshape(cn - n, cn)))
+		a = np.hstack((a, np.zeros(n * (cn - n)).astype(int).reshape(n, cn - n)))
+		a = np.vstack((a, np.zeros((cn - n) * cn).astype(int).reshape(cn - n, cn)))
 	return a
-                  
+                    
 n = int(input())                          
-a = read_array(n)
-b = read_array(n)                         
-a = add_zeros(a, n)
-b = add_zeros(b, n)
 
-c = multiply(a, b)[:n, :n].astype(int)
+a = read_array(n)
+b = read_array(n)                                            
+
+c = multiply(a, b)[:n, :n]
 for line in c:
 	print(' '.join(str(x) for x in line))
