@@ -38,13 +38,14 @@ def read_array(n):
 	return a
 
 def resize_array(a, cn):
+	n = np.shape(a)[0]
 	if n != cn:
 		a = np.hstack((a, np.zeros(n * (cn - n)).astype(a.dtype).reshape(n, cn - n)))
 		a = np.vstack((a, np.zeros((cn - n) * cn).astype(a.dtype).reshape(cn - n, cn)))
 	return a
 	
 def print_array(a):
-	for line in c:
+	for line in a:
 		print(' '.join(str(x) for x in line))
             
 n = int(input())                          
