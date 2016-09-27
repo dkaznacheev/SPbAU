@@ -24,12 +24,10 @@ def multiply(a, b):
 	p7 = multiply(a12 - a22, b21 + b22)
      	                                                                           
 	c = np.empty(num * num).astype(a.dtype).reshape(num, num)
-	for i in range(half):
-		for j in range(half):
-			c[i][j] = p1[i][j] + p4[i][j] - p5[i][j] + p7[i][j]
-			c[i][j + half] = p3[i][j] + p5[i][j]
-			c[i + half][j] = p2[i][j] + p4[i][j]
-			c[i + half][j + half] = p1[i][j] - p2[i][j] + p3[i][j] + p6[i][j]
+	np.copyto(c[:half, :half], p1 + p4 - p5 + p7)
+	np.copyto(c[:half, half:], p3 + p5)
+	np.copyto(c[half:, :half], p2 + p4)
+	np.copyto(c[half:, half:], p1 - p2 + p3 + p6)
 	return c
 
 def read_array(n):
@@ -39,20 +37,22 @@ def read_array(n):
 		a[i] = [int(x) for x in s.split(' ')]
 	return a
 
-def resize_array(a, n):
-	cn = 2 ** ((n - 1).bit_length())
+def resize_array(a, cn):
 	if n != cn:
 		a = np.hstack((a, np.zeros(n * (cn - n)).astype(a.dtype).reshape(n, cn - n)))
 		a = np.vstack((a, np.zeros((cn - n) * cn).astype(a.dtype).reshape(cn - n, cn)))
 	return a
 	
+def print_array(a):
+	for line in c:
+		print(' '.join(str(x) for x in line))
             
 n = int(input())                          
+cn = 2 ** ((n - 1).bit_length())
 
 a = read_array(n)
-b = read_array(n)                                            
-a = resize_array(a, n)                                       
-b = resize_array(b, n)
+b = read_array(n)                                
+a = resize_array(a, cn)
+b = resize_array(b, cn)
 c = multiply(a, b)[:n, :n]
-for line in c:
-	print(' '.join(str(x) for x in line))
+print_array(c)
