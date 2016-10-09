@@ -1,6 +1,6 @@
 class Scope(object):
 
-	def __init__(self, parent=None):
+	def __init__(self, parent = None):
 		self.store = {}
 		self.parent = parent
 
@@ -15,6 +15,9 @@ class Scope(object):
 
 	def __setitem__(self, key, value):
 		self.store[key] = value
+	
+	def __iter__(self):
+		return iter(self.store)
 
 
 class Number:   
@@ -108,7 +111,9 @@ class BinaryOperation:
 		return l % r
 
 	def eq(l, r):
-		return l == r
+		if l == r:
+			return 1
+		return 0
 
 	def ne(l, r):
 		return l != r
@@ -154,7 +159,7 @@ class BinaryOperation:
 
 	def evaluate(self, scope):
 		l = self.lhs.evaluate(scope)
-		r = self.rhs.evaluate(scope)
+		r = self.rhs.evaluate(scope)                                       
 		return Number(self.operations[self.op](l.value, r.value))
 
 class Print:
@@ -184,12 +189,12 @@ class Conditional:
 
 	def evaluate(self, scope):
 		res = None
-		if self.condition:
+		if self.condition.evaluate(scope).value:
 			for f in self.if_true:
-				res = f.evaluate(scope)
+				res = f.evaluate(scope)  
 		else:
 			for f in self.if_false:
-				res = f.evaluate(scope)
+				res = f.evaluate(scope)    
 		return res
 
 def example():
@@ -206,6 +211,7 @@ def example():
 	print('It should print 2: ', end=' ')
 	FunctionCall(FunctionDefinition('foo', parent['foo']),
                  [Number(5), UnaryOperation('-', Number(3))]).evaluate(scope)
+
 def my_tests():
 	fun1 = Function(('x', 'y', 'z'), [Print(BinaryOperation(BinaryOperation(Reference('x'), '*', Reference('y')),
 	 '%', Reference('z')))])
@@ -219,6 +225,18 @@ def my_tests():
 	print('if 5 equals 5, then 1, else 0:', end=' ')
 
 	FunctionCall(FunctionDefinition('fun2', fun2), [Number(5), Number(5)]).evaluate(scope)
+
+	fun3 = Function(('x', 'y', 'z'), [Conditional(
+		BinaryOperation(
+		BinaryOperation(Reference('x'), '==', Reference('y')),
+		'||',
+		BinaryOperation(Reference('x'), '==', Reference('z')),),
+		 [Print(Number(123))])])
+	scope1 = Scope()      
+
+	print('if 5 equals 3 or 4, then 123, else nothing:', end=' ')
+
+	FunctionCall(FunctionDefinition('fun3', fun3), [Number(5), Number(3), Number(4)]).evaluate(scope1)
 
 
 if __name__ == '__main__':
