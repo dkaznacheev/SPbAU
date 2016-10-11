@@ -89,7 +89,7 @@ class UnaryOperation:
 	def evaluate(self, scope):
 		x = self.expr.evaluate(scope).value
 		if self.op == '!':
-			return Number(not x)
+			return Number(int(not x))
 		else:
 			return Number(-1 * x)
 
@@ -158,7 +158,8 @@ class BinaryOperation:
 	def evaluate(self, scope):
 		l = self.lhs.evaluate(scope)
 		r = self.rhs.evaluate(scope)
-		return Number(self.operations[self.op](l.value, r.value))
+		assert(self.op in self.operations)
+		return Number(int(self.operations[self.op](l.value, r.value)))
 
 class Print:
 
@@ -218,6 +219,13 @@ def new_test():
 	scope = Scope()
 	FunctionCall(FunctionDefinition('fun', fun), []).evaluate(scope)
 
+def new_test1():
+	scope = Scope()
+
+	fun1 = Function(('x'), [Print(Reference('x'))])
+	fun2 = Function(('x'), [FunctionCall(FunctionDefinition('fun1', fun1), [Reference('x')])])
+	FunctionCall(FunctionDefinition('fun2', fun2), [Number(200)]).evaluate(scope)
+
 def my_tests():
 	fun1 = Function(('x', 'y', 'z'), [Print(BinaryOperation(BinaryOperation(Reference('x'), '*', Reference('y')),
 	 '%', Reference('z')))])
@@ -256,49 +264,12 @@ def my_tests():
 
 	FunctionCall(FunctionDefinition('fun3', fun3), [Number(5), Number(3), Number(4)]).evaluate(scope1)
 
-def func_condition_read_test():
-	print('Enter a, b, c')
-	main = Scope()
-	main['foo'] = Function(('enum', 'denom', 'val'),
-	[
-	Conditional(
-	FunctionCall(Reference('check_answer'),
-	[Reference('enum'),
-	Reference('denom'),
-	Reference('val')]),
-	[
-	Print(Reference('val'))
-	],
-	[
-	Print(Number(-1))
-	]
-	)
-	])
-	main['check_answer'] = Function(('a', 'b', 'c'),
-	[
-	Conditional(
-	BinaryOperation(Reference('c'),
-	'==',
-	BinaryOperation(Reference('a'),
-	'+',
-	Reference('b'))),
-	[
-	Number(1)
-	],
-	[
-	Number(0)
-	])
-	])
-	print('It would print c, if a + b = c and -1 if not: ', end=' ')
-	assert FunctionCall(FunctionDefinition('foo', main['foo']),
-	[
-	Read('first'),
-	Read('second'),
-	Read('third')
-	]).evaluate(main)
-			
+def test():
+	Print(UnaryOperation('!', Number(0))).evaluate(Scope())                           
+
 if __name__ == '__main__':
 	#example()
-	new_test()
-	#my_tests()
-	#func_condition_read_test()
+	#new_test()
+	#new_test1()
+	#my_tests()                      
+	test()
