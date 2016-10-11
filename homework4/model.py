@@ -1,24 +1,21 @@
-class Scope(object):
+class Scope():
 
 	def __init__(self, parent = None):
 		self.store = {}
 		self.parent = parent
 
 	def __getitem__(self, key):
-		try:
-			return self.store[key]
-		except KeyError:
-			try:
-				return self.parent[key]
-			except KeyError:
-				raise NotImplementedError
-
+		if key in self.store:
+			return self.store[key] 
+		if self.parent:
+			return self.parent[key]
+		return None
+			
 	def __setitem__(self, key, value):
 		self.store[key] = value
-
+    
 	def __iter__(self):
 		return iter(self.store)
-
 
 class Number:   
 
@@ -50,14 +47,8 @@ class FunctionCall:
 
 	def evaluate(self, scope):
 		function = self.fun_expr.evaluate(scope)
-		call_args = []
-		for arg in self.args:
-			call_args.append(arg.evaluate(scope))
 		call_scope = Scope(scope)
-		i = 0
-		for arg in function.args:
-			call_scope[arg] = call_args[i]
-			i += 1
+		call_scope.store.update(zip(function.args, [arg.evaluate(scope) for arg in self.args]))		
 		return function.evaluate(call_scope)
 
 
@@ -157,8 +148,7 @@ class BinaryOperation:
 
 	def evaluate(self, scope):
 		l = self.lhs.evaluate(scope)
-		r = self.rhs.evaluate(scope)
-		assert(self.op in self.operations)
+		r = self.rhs.evaluate(scope)                         
 		return Number(int(self.operations[self.op](l.value, r.value)))
 
 class Print:
@@ -167,9 +157,8 @@ class Print:
 		self.expr = expr
 
 	def evaluate(self, scope):
-		num = self.expr.evaluate(scope)
-		if num:
-			print(num.value)
+		num = self.expr.evaluate(scope)               
+		print(num.value)
 		return num
 
 class Read:
@@ -182,20 +171,19 @@ class Read:
 		return scope[self.name]
 
 class Conditional:
-	def __init__(self, condition, if_true, if_false = None):
+	def __init__(self, condition, if_true = [], if_false = []):
 		self.condition = condition
 		self.if_true = if_true
 		self.if_false = if_false
 
 	def evaluate(self, scope):
 		res = None
-		cond = self.condition.evaluate(scope)
-		if cond and cond.value:
-			for f in self.if_true or []:
-				res = f.evaluate(scope)  
+		if self.condition.evaluate(scope).value:
+			branch = self.if_true
 		else:
-			for f in self.if_false or []:
-				res = f.evaluate(scope)
+			branch = self.if_false
+		for f in branch:
+			res = f.evaluate(scope)  
 		return res
 
 def example():
@@ -214,8 +202,7 @@ def example():
                  [Number(5), UnaryOperation('-', Number(3))]).evaluate(scope)
 
 def new_test():
-	fun = Function((), [Print(Conditional(Conditional(Number(0), [Print(Number(100))]
-	),[Print(Number(1000))]))])
+	fun = Function((), [Conditional(Number(0), [Print(Number(1000))])])
 	scope = Scope()
 	FunctionCall(FunctionDefinition('fun', fun), []).evaluate(scope)
 
@@ -265,11 +252,11 @@ def my_tests():
 	FunctionCall(FunctionDefinition('fun3', fun3), [Number(5), Number(3), Number(4)]).evaluate(scope1)
 
 def test():
-	Print(UnaryOperation('!', Number(0))).evaluate(Scope())                           
+	Conditional(UnaryOperation('!', Number(0)), [Print(Number(200))]).evaluate(Scope())                           
 
 if __name__ == '__main__':
 	#example()
 	#new_test()
 	#new_test1()
 	#my_tests()                      
-	test()
+	test()               
