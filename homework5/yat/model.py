@@ -218,10 +218,10 @@ class Read:
 
 
 class Conditional:
-    def __init__(self, condition, if_true=[], if_false=[]):
+    def __init__(self, condition, if_true = None, if_false = None):
         self.condition = condition
-        self.if_true = if_true or []
-        self.if_false = if_false or []
+        self.if_true = if_true
+        self.if_false = if_false
 
     def fold(self, folder):
         return folder.foldConditional(self)
@@ -231,12 +231,14 @@ class Conditional:
 
     def evaluate(self, scope):
         res = None
-        if self.condition.evaluate(scope).value:
+        branch = None
+        if self.condition.evaluate(scope).value and self.if_true:
             branch = self.if_true
-        else:
+        elif self.if_false:
             branch = self.if_false
-        for f in branch:
-            res = f.evaluate(scope)
+        if branch:
+            for f in branch:
+                res = f.evaluate(scope)
         return res
 
 
@@ -310,12 +312,10 @@ def my_tests():
 
 
 def test():
-    Conditional(UnaryOperation('!', Number(0)), [Print(Number(200))]).evaluate(Scope())
+    Conditional(UnaryOperation('!', Number(0))).evaluate(Scope())
 
 if __name__ == '__main__':
     # example()
     # new_test()
     # new_test1()
-    # my_tests()
-    # test()
-    pretty()
+    # my_tests()     

@@ -103,8 +103,9 @@ class PrettyPrinter:
 
         print(") {")
         self.indent += 1
-        for sentence in cond.if_true:
-            sentence.visit(self)
+        if cond.if_true:
+            for sentence in cond.if_true:
+                sentence.visit(self)
 
         if cond.if_false:
             print("} else {")
@@ -112,4 +113,4 @@ class PrettyPrinter:
                 sentence.visit(self)
 
         self.indent -= 1
-        print("};")
+        print("};")                      

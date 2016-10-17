@@ -52,7 +52,10 @@ class ConstantFolder:
 
     def foldConditional(self, cond):
         condition = cond.condition.fold(self)
-        if_true = [f.fold(self) for f in cond.if_true]
-        if_false = [f.fold(self) for f in cond.if_false]
+        if_true = None
+        if_false = None
+        if cond.if_true:
+            if_true = [f.fold(self) for f in cond.if_true]
+        if cond.if_false:    
+            if_false = [f.fold(self) for f in cond.if_false]
         return Conditional(condition, if_true, if_false)
-            
