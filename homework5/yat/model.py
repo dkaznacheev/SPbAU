@@ -220,8 +220,8 @@ class Read:
 class Conditional:
     def __init__(self, condition, if_true=[], if_false=[]):
         self.condition = condition
-        self.if_true = if_true
-        self.if_false = if_false
+        self.if_true = if_true or []
+        self.if_false = if_false or []
 
     def fold(self, folder):
         return folder.foldConditional(self)
