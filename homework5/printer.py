@@ -113,4 +113,4 @@ class PrettyPrinter:
                 sentence.visit(self)
 
         self.indent -= 1
-        print("};")                      
+        print("};")

@@ -22,10 +22,7 @@ class Number:
         self.value = value
 
     def visit(self, visitor):
-        visitor.visitNumber(self)
-
-    def fold(self, folder):
-        return folder.foldNumber(self)
+        return visitor.visitNumber(self)
 
     def evaluate(self, scope):
         return self
@@ -36,8 +33,8 @@ class Function:
         self.args = args
         self.body = body
 
-    def fold(self, folder):
-        return folder.foldFunction(self)
+    def visit(self, visitor):
+        return visitor.visitFunction(self)
 
     def evaluate(self, scope):
         res = None
@@ -51,11 +48,8 @@ class FunctionCall:
         self.fun_expr = fun_expr
         self.args = args
 
-    def fold(self, folder):
-        return folder.foldFunctionCall(self)
-
     def visit(self, visitor):
-        visitor.visitFunctionCall(self)
+        return visitor.visitFunctionCall(self)
 
     def evaluate(self, scope):
         function = self.fun_expr.evaluate(scope)
@@ -68,11 +62,8 @@ class Reference:
     def __init__(self, name):
         self.name = name
 
-    def fold(self, folder):
-        return folder.foldReference(self)
-
     def visit(self, visitor):
-        visitor.visitReference(self)
+        return visitor.visitReference(self)
 
     def evaluate(self, scope):
         return scope[self.name]
@@ -83,11 +74,8 @@ class FunctionDefinition:
         self.name = name
         self.function = function
 
-    def fold(self, folder):
-        return folder.foldFunctionDefinition(self)
-
     def visit(self, visitor):
-        visitor.visitFunctionDefinition(self)
+        return visitor.visitFunctionDefinition(self)
 
     def evaluate(self, scope):
         scope[self.name] = self.function
@@ -100,10 +88,7 @@ class UnaryOperation:
         self.expr = expr
 
     def visit(self, visitor):
-        visitor.visitUnaryOperation(self)
-
-    def fold(self, folder):
-        return folder.foldUnaryOperation(self)
+        return visitor.visitUnaryOperation(self)
 
     def evaluate(self, scope):
         x = self.expr.evaluate(scope).value
@@ -174,11 +159,8 @@ class BinaryOperation:
         self.op = op
         self.rhs = rhs
 
-    def fold(self, folder):
-        return folder.foldBinaryOperation(self)
-
     def visit(self, visitor):
-        visitor.visitBinaryOperation(self)
+        return visitor.visitBinaryOperation(self)
 
     def evaluate(self, scope):
         l = self.lhs.evaluate(scope)
@@ -190,11 +172,8 @@ class Print:
     def __init__(self, expr):
         self.expr = expr
 
-    def fold(self, folder):
-        return folder.foldPrint(self)
-
     def visit(self, visitor):
-        visitor.visitPrint(self)
+        return visitor.visitPrint(self)
 
     def evaluate(self, scope):
         num = self.expr.evaluate(scope)
@@ -206,11 +185,8 @@ class Read:
     def __init__(self, name):
         self.name = name
 
-    def fold(self, folder):
-        return folder.foldRead(self)
-
     def visit(self, visitor):
-        visitor.visitRead(self)
+        return visitor.visitRead(self)
 
     def evaluate(self, scope):
         scope[self.name] = Number(int(input()))
@@ -223,11 +199,8 @@ class Conditional:
         self.if_true = if_true
         self.if_false = if_false
 
-    def fold(self, folder):
-        return folder.foldConditional(self)
-
     def visit(self, visitor):
-        visitor.visitConditional(self)
+        return visitor.visitConditional(self)
 
     def evaluate(self, scope):
         res = None
