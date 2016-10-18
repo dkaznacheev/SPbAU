@@ -29,8 +29,11 @@ class PrettyPrinter:
         prev_state = self.is_sentence
         self.is_sentence = False
         fcall.fun_expr.visit(self)
-        print(" (", end="")
-        print(", ".join([(arg.visit(self) or "") for arg in fcall.args]), end="")
+        print("(", end="")
+        for i in range(len(fcall.args)):
+            fcall.args[i].visit(self)
+            if i != len(fcall.args) - 1:
+                print(', ', end = "")
         print(")", end="")
         self.is_sentence = prev_state
         if self.is_sentence:
@@ -113,4 +116,4 @@ class PrettyPrinter:
                 sentence.visit(self)
 
         self.indent -= 1
-        print("};")
+        print("\t" * self.indent + "};")
