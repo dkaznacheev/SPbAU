@@ -34,11 +34,11 @@ class ConstantFolder:
     def visitBinaryOperation(self, binop):
         lhs = binop.lhs.visit(self)
         rhs = binop.rhs.visit(self)
-        if type(lhs) is Number and type(lhs) is Number:
+        if isinstance(lhs, Number) and isinstance(rhs, Number):
             return binop.evaluate(Scope())
-        if ((type(lhs) is Number and lhs.value == 0) or (type(rhs) is Number and rhs.value == 0)) and binop.op == '*':
+        if ((isinstance(lhs, Number) and lhs.value == 0) or (isinstance(rhs, Number) and rhs.value == 0)) and binop.op == '*':
             return Number(0)
-        if type(lhs) is Reference and type(rhs) is Reference and lhs.name == rhs.name and binop.op == '-':
+        if isinstance(lhs, Reference) and isinstance(rhs, Reference) and lhs.name == rhs.name and binop.op == '-':
             return Number(0)
         return BinaryOperation(lhs, binop.op, rhs)
         
@@ -57,8 +57,3 @@ class ConstantFolder:
         if cond.if_false:    
             if_false = [f.visit(self) for f in cond.if_false]
         return Conditional(condition, if_true, if_false)
-
-cf = ConstantFolder()
-nn = BinaryOperation(Number(5), '>=', Number(3))
-n = nn.visit(cf)
-print(n.value)
