@@ -1,8 +1,6 @@
 from yat.model import Number, FunctionCall, Reference, FunctionDefinition,\
 Function, UnaryOperation, BinaryOperation, Print, Read, Conditional, Scope
 
-from printer import PrettyPrinter
-
 class ConstantFolder:
 
 
