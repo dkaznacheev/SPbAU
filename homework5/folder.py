@@ -28,15 +28,15 @@ class ConstantFolder:
     def visitUnaryOperation(self, unop):
         expr = unop.expr.visit(self)
         if type(expr) is Number:
-            return unop.evaluate(Scope())
+            return UnaryOperation(unop.op, expr).evaluate(Scope())
         return UnaryOperation(unop.op, expr)
 
     def visitBinaryOperation(self, binop):
         lhs = binop.lhs.visit(self)
         rhs = binop.rhs.visit(self)
         if isinstance(lhs, Number) and isinstance(rhs, Number):
-            return binop.evaluate(Scope())
-        if ((isinstance(lhs, Number) and lhs.value == 0) or (isinstance(rhs, Number) and rhs.value == 0)) and binop.op == '*':
+            return BinaryOperation(lhs, binop.op, rhs).evaluate(Scope())
+        if ((isinstance(lhs, Number) and lhs.value == 0 and isinstance(rhs, Reference)) or (isinstance(rhs, Number) and rhs.value == 0 and isinstance(lhs, Reference))) and binop.op == '*':
             return Number(0)
         if isinstance(lhs, Reference) and isinstance(rhs, Reference) and lhs.name == rhs.name and binop.op == '-':
             return Number(0)
