@@ -25,7 +25,8 @@ class PrettyPrinter:
             print(";")
 
     def visitFunctionCall(self, fcall):
-        print("\t" * self.indent, end="")
+        if self.is_sentence:
+            print("\t" * self.indent, end="")
         prev_state = self.is_sentence
         self.is_sentence = False
         fcall.fun_expr.visit(self)
@@ -117,3 +118,20 @@ class PrettyPrinter:
 
         self.indent -= 1
         print("\t" * self.indent + "};")
+def test():
+    f1 = Conditional(FunctionCall(Reference('x'), [Number(22)]), [Conditional(BinaryOperation(Number(0), '-', Number(6)), [],[Conditional(Number(0), [Conditional(UnaryOperation('-', Number(20)), [],[FunctionDefinition('foobar', Function(['ab', 'cd'], [
+    Print(BinaryOperation(UnaryOperation('-', Number(120)), '*', BinaryOperation(UnaryOperation('-', Number(20)), '+', Reference('z')))), Read('x')
+    ]))])],[])])],[Conditional(Number(0), [Conditional(Number(0), [],[])],[])])
+
+    f = FunctionDefinition('foo', Function(['a', 'b'], [
+    FunctionDefinition('bar', Function(['c', 'd'], [
+    Read('c')
+    ])),
+    Conditional(Number(6), [Conditional(Number(5), [Read('x')])],[f1])
+    ]))
+
+    pr = PrettyPrinter()
+    pr.visit(f)
+
+if __name__ == '__main__':
+	test()               
