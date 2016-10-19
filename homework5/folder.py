@@ -21,8 +21,11 @@ class ConstantFolder:
     def visitFunctionDefinition(self, fdef):
         return FunctionDefinition(fdef.name, fdef.function.visit(self))
 
+    def visitBody(self, body):
+        return [f.visit(self) for f in body]
+
     def visitFunction(self, fun):
-        body = [f.visit(self) for f in fun.body]
+        body = self.visitBody(fun.body)
         return Function(fun.args, body)
 
     def visitUnaryOperation(self, unop):
@@ -47,16 +50,13 @@ class ConstantFolder:
     
     def visitRead(self, reader):
         return reader
-
-    def visitBranch(self, branch):
-        return [f.visit(self) for f in branch]
-
+    
     def visitConditional(self, cond):
         condition = cond.condition.visit(self)
         if_true = None
         if_false = None
         if cond.if_true:
-            if_true = visitBranch(if_true)
+            if_true = self.visitBody(cond.if_true)
         if cond.if_false:    
-            if_false = visitBranch(if_false)
+            if_false = self.visitBody(cond.if_false)
         return Conditional(condition, if_true, if_false)
