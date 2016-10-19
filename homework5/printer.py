@@ -45,13 +45,10 @@ class PrettyPrinter:
             print("\t" * self.indent, end="")
         print("def " + fdef.name + "(", end="")
         print(", ".join(fdef.function.args) + ") {")
-        prev_state = self.is_sentence
-        self_is_sentence = True
         self.indent += 1
         for sentence in fdef.function.body:
             sentence.visit(self)
         self.indent -= 1
-        self.is_sentence = prev_state
         print("\t" * self.indent + "}", end="")
         if self.is_sentence:
             print(";")
@@ -99,6 +96,10 @@ class PrettyPrinter:
     def visitRead(self, reader):
         print("\t" * self.indent + "read " + reader.name + ";")
 
+    def visitBranch(self, branch):
+        for sentence in branch:
+            sentence.visit(self)
+        
     def visitConditional(self, cond):
         print("\t" * self.indent + "if (", end="")
         self.is_sentence = False
@@ -108,16 +109,13 @@ class PrettyPrinter:
         print(") {")
         self.indent += 1
         if cond.if_true:
-            for sentence in cond.if_true:
-                sentence.visit(self)
-
+            self.visitBranch(cond.if_true)
         if cond.if_false:
             print("\t" * (self.indent - 1) + "} else {")
-            for sentence in cond.if_false:
-                sentence.visit(self)
-
+            self.visitBranch(cond.if_false)
         self.indent -= 1
         print("\t" * self.indent + "};")
+
 def test():
     f1 = Conditional(FunctionCall(Reference('x'), [Number(22)]), [Conditional(BinaryOperation(Number(0), '-', Number(6)), [],[Conditional(Number(0), [Conditional(UnaryOperation('-', Number(20)), [],[FunctionDefinition('foobar', Function(['ab', 'cd'], [
     Print(BinaryOperation(UnaryOperation('-', Number(120)), '*', BinaryOperation(UnaryOperation('-', Number(20)), '+', Reference('z')))), Read('x')

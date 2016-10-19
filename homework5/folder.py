@@ -48,12 +48,15 @@ class ConstantFolder:
     def visitRead(self, reader):
         return reader
 
+    def visitBranch(self, branch):
+        return [f.visit(self) for f in branch]
+
     def visitConditional(self, cond):
         condition = cond.condition.visit(self)
         if_true = None
         if_false = None
         if cond.if_true:
-            if_true = [f.visit(self) for f in cond.if_true]
+            if_true = visitBranch(if_true)
         if cond.if_false:    
-            if_false = [f.visit(self) for f in cond.if_false]
+            if_false = visitBranch(if_false)
         return Conditional(condition, if_true, if_false)
