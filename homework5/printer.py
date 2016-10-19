@@ -43,7 +43,7 @@ class PrettyPrinter:
         if self.is_sentence:
             print("\t" * self.indent, end="")
         print("def " + fdef.name + "(", end="")
-        print("\t" * self.indent + ", ".join(fdef.function.args) + ") {")
+        print(", ".join(fdef.function.args) + ") {")
         prev_state = self.is_sentence
         self_is_sentence = True
         self.indent += 1
@@ -111,7 +111,7 @@ class PrettyPrinter:
                 sentence.visit(self)
 
         if cond.if_false:
-            print("} else {")
+            print("\t" * (self.indent - 1) + "} else {")
             for sentence in cond.if_false:
                 sentence.visit(self)
 
