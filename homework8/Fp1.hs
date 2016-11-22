@@ -13,9 +13,9 @@ drop' n xs = drop' (n - 1) (tail' xs)
 filter' f [] = []
 filter' f xs | f (head' xs) = (head' xs):filter' f (tail' xs) | otherwise = filter' f (tail' xs)
 
-foldl' (f) n [] = n
-foldl' (f) n xs = foldl' (f) next_n (tail' xs) where
-    next_n = (f) n (head' xs)
+foldl' f n [] = n
+foldl' f n xs = foldl' f next_n (tail' xs) where
+    next_n = f n (head' xs)
 
 concat' [] ys = ys
 concat' xs ys = (head' xs):(concat' (tail' xs) ys)
