@@ -2,30 +2,33 @@ import Prelude hiding (lookup)
 
 data BinaryTree k v = Nil | Node k v (BinaryTree k v) (BinaryTree k v) deriving (Show, Eq)
 
-insert Nil k v = Node k v Nil Nil
-insert (Node nk nv left right) k v
-    | k == nk = Node k v left right
-    | k < nk = Node nk nv (insert left k v) right
-    | k > nk = Node nk nv left (insert right k v)
+insert :: Ord k => k -> v -> BinaryTree k v -> BinaryTree k v
+insert k v Nil = Node k v Nil Nil
+insert k v (Node nk nv left right) 
+    | k == nk = Node nk v left right
+    | k < nk = Node nk nv (insert k v left) right
+    | k > nk = Node nk nv left (insert k v right)
 
-lookup Nil k = Nothing
-lookup (Node nk nv left right) k 
+lookup :: Ord k => k -> BinaryTree k v -> Maybe v  
+lookup k Nil = Nothing
+lookup k (Node nk nv left right)
     | k == nk = Just nv
-    | k < nk = lookup left k
-    | k > nk = lookup right k
-
-delete Nil k = Nil
-delete (Node nk nv left right) k
+    | k < nk = lookup k left
+    | k > nk = lookup k right
+    
+delete :: Ord k => k -> BinaryTree k v -> BinaryTree k v    
+delete k Nil = Nil
+delete k (Node nk nv left right)
     | k == nk = rebuilt (Node nk nv left right)
-    | k < nk = Node nk nv (delete left k) right
-    | k > nk = Node nk nv left (delete right k)
+    | k < nk = Node nk nv (delete k left) right
+    | k > nk = Node nk nv left (delete k right)
 
 rebuilt (Node nk nv Nil right) = right
 rebuilt (Node nk nv left right) = Node lk lv left' right where
     lk = fst rleft
     lv = snd rleft
     rleft = rightest left
-    left' = delete left lk
+    left' = delete lk left
     rightest (Node nk nv _ Nil) = (nk, nv)
     rightest (Node nk nv _ right) = rightest right
 
